@@ -1,7 +1,7 @@
 import { SharedValue } from 'react-native-reanimated';
 
 export type Tab = {
-  title: I18nKeys;
+  title: string;
   key: string;
 };
 
@@ -20,5 +20,5 @@ export type TabsProps = {
 export type TabItemProps = {
   tab: Tab;
   index: number;
-  selectedIndex: SharedValue<number>;
+  selectedIndex: number;
 };

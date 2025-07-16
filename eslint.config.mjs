@@ -122,6 +122,8 @@ export default [
       'no-constant-condition': 2,
       'no-dupe-args': 2,
       'no-dupe-else-if': 2,
+      'import/no-extraneous-dependencies': 0,
+
       'no-dupe-keys': 2,
 
       'no-duplicate-imports': 2,
@@ -131,7 +133,6 @@ export default [
       'no-ex-assign': 2,
 
       'no-fallthrough': 2,
-
       'no-import-assign': 2,
       'no-inline-comments': 2,
       'no-nested-ternary': 2,

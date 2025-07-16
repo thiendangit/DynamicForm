@@ -1,86 +1,105 @@
 import React from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TabItemProps, Tab } from './type';
 
-import { useTranslation } from 'react-i18next';
-import { useAnimatedStyle } from 'react-native-reanimated';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+interface CustomTabItemProps extends TabItemProps {
+  onPress?: () => void;
+  onRemove?: () => void;
+  isAdd?: boolean;
+  selectedIndex: number;
+}
 
-import { DefaultButton } from '@components/button/default-button';
-import { AnimatedText, AnimatedView, View } from '@rn-core';
-
-import { TabItemProps } from './type';
-
-export const TabItem = ({ tab, index, selectedIndex }: TabItemProps) => {
-  // state
-  const { styles, theme } = useStyles(styleSheet);
-
-  const [t] = useTranslation();
-
-  // func
-  const handlePress = () => {
-    if (selectedIndex.value === index) {
-      return;
-    }
-
-    selectedIndex.value = index;
-  };
-
-  // style
-  const underlineStyle = useAnimatedStyle(() => ({
-    opacity: selectedIndex.value === index ? 1 : 0,
-  }));
-
-  const textStyle = useAnimatedStyle(() => ({
-    color:
-      selectedIndex.value === index
-        ? theme.color.neutral500
-        : theme.color.neutral300,
-  }));
-
-  // render
-  return (
-    <View style={styles.container}>
-      <DefaultButton onPress={handlePress}>
-        <View style={styles.button}>
-          <AnimatedText style={[theme.textPresets.CTAs, textStyle]}>
-            {t(tab.title)}
-          </AnimatedText>
+export const TabItem = React.forwardRef<View, CustomTabItemProps>(
+  ({ tab, index, selectedIndex, onPress, onRemove, isAdd }, ref) => {
+    const isActive = selectedIndex === index;
+    if (isAdd) {
+      return (
+        <View ref={ref}>
+          <TouchableOpacity style={styles.addTab} onPress={onPress}>
+            <Text style={styles.addTabText}>+</Text>
+          </TouchableOpacity>
         </View>
-      </DefaultButton>
-      <AnimatedView pointerEvents="none" style={styles.underlineOverlay} />
-      <AnimatedView
-        pointerEvents="none"
-        style={[styles.underline, underlineStyle]}
-      />
-    </View>
-  );
-};
+      );
+    }
+    return (
+      <View ref={ref}>
+        <TouchableOpacity
+          onPress={onPress}
+          style={[
+            styles.tab,
+            isActive ? styles.tabActive : styles.tabInactive,
+            styles.tabWrapper,
+          ]}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.tabText, isActive ? styles.tabTextActive : styles.tabTextInactive]}>
+            {tab.title}
+          </Text>
+          {onRemove && (
+            <TouchableOpacity onPress={onRemove} style={styles.removeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Text style={styles.removeBtnText}>×</Text>
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  }
+);
 
-const styleSheet = createStyleSheet(theme => ({
-  button: {
+const styles = StyleSheet.create({
+  tabWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tab: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderTopEndRadius: 10,
+    borderTopStartRadius: 10,
+    minWidth: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 12,
+    flexDirection: 'row',
   },
-  container: {
-    flex: 1,
+  tabActive: {
+    backgroundColor: '#4F46E5',
   },
-  underline: {
-    backgroundColor: theme.color.primary500,
-    bottom: 0,
-    height: 2,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    zIndex: 99,
+  tabInactive: {
+    backgroundColor: '#DDDEE0FF',
   },
-  underlineOverlay: {
-    backgroundColor: theme.color.primary50,
-    bottom: 0,
-    height: 2,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    zIndex: 9,
+  tabText: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
-}));
+  tabTextActive: {
+    color: '#fff',
+  },
+  tabTextInactive: {
+    color: '#374151',
+  },
+  addTab: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#DDDEE0FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addTabText: {
+    color: '#374151',
+    fontSize: 22,
+    marginTop: -2,
+  },
+  removeBtn: {
+    marginLeft: 8,
+    padding: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeBtnText: {
+    color: '#BC305D',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: -2,
+  },
+});
