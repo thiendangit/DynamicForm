@@ -1,0 +1,38 @@
+diff --git a/node_modules/curved-bottom-navigation-bar/src/AnimatedTabBar.tsx b/node_modules/curved-bottom-navigation-bar/src/AnimatedTabBar.tsx
+index 77a3fb9..00db2a6 100644
+--- a/node_modules/curved-bottom-navigation-bar/src/AnimatedTabBar.tsx
++++ b/node_modules/curved-bottom-navigation-bar/src/AnimatedTabBar.tsx
+@@ -23,7 +23,6 @@ import type {
+ Animated.addWhitelistedNativeProps({
+   width: true,
+   stroke: true,
+-  backgroundColor: true,
+ });
+ 
+ interface AnimatedTabBarProps
+diff --git a/node_modules/curved-bottom-navigation-bar/src/curved/CurvedTabBar.tsx b/node_modules/curved-bottom-navigation-bar/src/curved/CurvedTabBar.tsx
+index 11e133a..cf7efd1 100644
+--- a/node_modules/curved-bottom-navigation-bar/src/curved/CurvedTabBar.tsx
++++ b/node_modules/curved-bottom-navigation-bar/src/curved/CurvedTabBar.tsx
+@@ -107,15 +107,12 @@ const CurvedTabBarComponent = (props: TabBarViewProps) => {
+     const centerHoleX = xPath.value + widthTab / 2;
+     return {
+       d: `M0,0 L${centerHoleX - SIZE_DOT},0
+-      C${centerHoleX - SIZE_DOT * 0.5},0 ${
+-        centerHoleX - SIZE_DOT * 0.75
+-      },${HEIGHT_HOLE} ${centerHoleX},${HEIGHT_HOLE} 
+-      C${centerHoleX + SIZE_DOT * 0.75},${HEIGHT_HOLE} ${
+-        centerHoleX + SIZE_DOT * 0.5
+-      },0 ${centerHoleX + SIZE_DOT} 0 
+-      L${actualBarWidth * 2},0 L ${
+-        actualBarWidth * 2
+-      },${actualBarHeight} L 0,${actualBarHeight} Z
++      C${centerHoleX - SIZE_DOT * 0.5},0 ${centerHoleX - SIZE_DOT * 0.75
++        },${HEIGHT_HOLE} ${centerHoleX},${HEIGHT_HOLE} 
++      C${centerHoleX + SIZE_DOT * 0.75},${HEIGHT_HOLE} ${centerHoleX + SIZE_DOT * 0.5
++        },0 ${centerHoleX + SIZE_DOT} 0 
++      L${actualBarWidth * 2},0 L ${actualBarWidth * 2
++        },${actualBarHeight} L 0,${actualBarHeight} Z
+       `,
+     };
+   }, [actualBarWidth, widthTab, SIZE_DOT, actualBarHeight]);

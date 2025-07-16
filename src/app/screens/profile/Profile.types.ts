@@ -1,0 +1,1 @@
+// Types cho ProfileScreen phase 1 

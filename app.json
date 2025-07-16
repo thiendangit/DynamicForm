@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "DynamicFormApp",
+    "slug": "DynamicFormApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "scheme": "DynamicFormApp",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.DynamicFormApp"
+    },
+    "android": {
+      "package": "com.dynamicformapp",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      [
+        "expo-dev-client",
+        {
+          "launchMode": "most-recent"
+        }
+      ],
+      "react-native-keys",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
+  }
+}
