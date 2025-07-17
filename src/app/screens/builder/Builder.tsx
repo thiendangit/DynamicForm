@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Switch, TouchableOpacity } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
@@ -16,8 +16,6 @@ import { ConfirmDeleteTabModal } from './components/ConfirmDeleteTabModal';
 import SectionList from './components/SectionList';
 
 export default function BuilderScreen() {
-  const [sectionToDelete, setSectionToDelete] = useState<number | null>(null);
-
   const {
     selectors: {
       tabs,
@@ -30,6 +28,7 @@ export default function BuilderScreen() {
       height,
       autoSave,
       tabToDelete,
+      sectionToDelete,
     },
     handlers: {
       handleTabChange,
@@ -43,6 +42,7 @@ export default function BuilderScreen() {
       handleSubmit,
       setAutoSave,
       setTabToDelete,
+      setSectionToDelete,
     },
     form,
   } = useBuilderViewModel();
@@ -100,6 +100,7 @@ export default function BuilderScreen() {
           activeTab={activeTab}
           setTabToDelete={setTabToDelete}
           setSectionToDelete={setSectionToDelete}
+          sectionToDelete={sectionToDelete}
         />
         <View style={styles.saveBtnWrapper}>
           <TouchableOpacity
@@ -122,12 +123,14 @@ export default function BuilderScreen() {
         onConfirm={confirmRemoveTab}
         onCancel={() => setTabToDelete(null)}
         theme={theme}
+        message="Are you sure you want to delete this tab?"
       />
       <ConfirmDeleteTabModal
         visible={sectionToDelete !== null}
         onConfirm={confirmRemoveSection}
         onCancel={() => setSectionToDelete(null)}
         theme={theme}
+        message="Are you sure you want to delete this section?"
       />
     </Screen>
   );

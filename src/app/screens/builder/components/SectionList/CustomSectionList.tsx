@@ -16,13 +16,13 @@ interface Props {
   form: UseFormReturn<BuilderForm>;
   sections: Section[];
   onAddSection: () => void;
-  onRemoveSection: (idx: number) => void;
   errors: TabError;
   tabName: string;
   onChangeTabName: (val: string) => void;
   activeTab: number;
   setTabToDelete: (idx: number) => void;
   setSectionToDelete: (idx: number) => void;
+  sectionToDelete: number | null;
 }
 
 export default function CustomSectionList({
@@ -32,10 +32,11 @@ export default function CustomSectionList({
   onChangeTabName,
   activeTab,
   setSectionToDelete,
+  sectionToDelete,
 }: Props) {
   const { styles } = useStyles(customSectionListStyles);
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: `tabs.${activeTab}.sections`,
   });
@@ -47,6 +48,29 @@ export default function CustomSectionList({
   const handleOpenDateModal = (idx: number) => setSectionDateModalIdx(idx);
 
   const handleCloseDateModal = () => setSectionDateModalIdx(null);
+
+  // Hàm xác nhận xóa section
+  const [pendingRemoveIdx, setPendingRemoveIdx] = React.useState<number | null>(
+    null,
+  );
+
+  const handleRemoveSection = (idx: number) => {
+    setPendingRemoveIdx(idx);
+
+    setSectionToDelete(idx);
+  };
+
+  React.useEffect(() => {
+    if (pendingRemoveIdx === null) {
+      return;
+    }
+
+    if (sectionToDelete === null) {
+      remove(pendingRemoveIdx);
+
+      setPendingRemoveIdx(null);
+    }
+  }, [pendingRemoveIdx, remove, sectionToDelete]);
 
   return (
     <View style={styles.wrapper}>
@@ -75,10 +99,10 @@ export default function CustomSectionList({
           const newSections = _sections.map((s, i: number) =>
             i === idx
               ? {
-                ...s,
-                type: val ? 'date' : 'text',
-                value: val ? dayjs().format('YYYY-MM-DD') : '',
-              }
+                  ...s,
+                  type: val ? 'date' : 'text',
+                  value: val ? dayjs().format('YYYY-MM-DD') : '',
+                }
               : s,
           );
 
@@ -153,8 +177,8 @@ export default function CustomSectionList({
                   <TextInput
                     value={String(
                       form.watch(`tabs.${activeTab}.sections.${idx}.value`) ||
-                      field.value ||
-                      '',
+                        field.value ||
+                        '',
                     )}
                     placeholder="YYYY-MM-DD"
                     editable={false}
@@ -210,7 +234,7 @@ export default function CustomSectionList({
               </Text>
             )}
             <TouchableOpacity
-              onPress={() => setSectionToDelete(idx)}
+              onPress={() => handleRemoveSection(idx)}
               style={styles.removeBtn}>
               <MaterialCommunityIcons
                 name="trash-can-outline"

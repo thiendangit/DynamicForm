@@ -19,6 +19,7 @@ export interface SectionListProps {
   activeTab: number;
   setTabToDelete: (idx: number) => void;
   setSectionToDelete: (idx: number) => void;
+  sectionToDelete: number | null;
 }
 
 export default function SectionList(props: SectionListProps) {
@@ -26,5 +27,5 @@ export default function SectionList(props: SectionListProps) {
     return <PositionSectionList {...props} />;
   }
 
-  return <CustomSectionList {...props} />;
+  return <CustomSectionList {...props} sectionToDelete={props.sectionToDelete} />;
 }

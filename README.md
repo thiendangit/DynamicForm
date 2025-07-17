@@ -21,6 +21,10 @@ Below are some screenshots of the main features in **DynamicFormApp**:
     <b>Custom Category with Date Section</b><br/>
     <img src="documentAssets/builder_custom_cate_section_date.png" alt="Custom Category with Date Section" width="300" />
   </div>
+  <div>
+    <b>Save Success Notification</b><br/>
+    <img src="documentAssets/builder_save_success.png" alt="Save Success Notification" width="300" />
+  </div>
 </div>
 
 ### Profile Tab
