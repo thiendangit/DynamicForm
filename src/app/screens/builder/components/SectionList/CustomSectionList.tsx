@@ -103,8 +103,8 @@ export default function CustomSectionList({
                   style={{ marginRight: 4 }}
                 />
                 <Text
-                  style={[styles.switchLabel, isDate && { color: '#4F46E5' }]}>
-                  Date
+                  style={[styles.switchLabel, !isDate && { color: '#374151' }]}>
+                  Text
                 </Text>
                 <Switch
                   value={isDate}
@@ -113,8 +113,8 @@ export default function CustomSectionList({
                   thumbColor={isDate ? '#fff' : '#fff'}
                 />
                 <Text
-                  style={[styles.switchLabel, !isDate && { color: '#374151' }]}>
-                  Text
+                  style={[styles.switchLabel, isDate && { color: '#4F46E5' }]}>
+                  Date
                 </Text>
               </View>
             </View>

@@ -35,6 +35,7 @@ type UseBuilderViewModelReturn = {
     height: number;
     autoSave: boolean;
     tabToDelete: number | null;
+    sectionToDelete: number | null;
   };
   handlers: {
     handleTabChange: (index: number) => void;
@@ -49,6 +50,7 @@ type UseBuilderViewModelReturn = {
     setActiveTab: (idx: number) => void;
     setAutoSave: (value: boolean) => void;
     setTabToDelete: (index: number | null) => void;
+    setSectionToDelete: (index: number | null) => void;
   };
   form: UseFormReturn<BuilderForm>;
 };
@@ -59,6 +61,7 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
   ]);
 
   const [tabToDelete, setTabToDelete] = useState<number | null>(null);
+  const [sectionToDelete, setSectionToDelete] = useState<number | null>(null);
 
   const height = useBottomTabBarHeight();
 
@@ -153,12 +156,14 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
   const handleCancelAddTab = () => setShowAddCategory(false);
 
   const handleSubmitAddTab = (data: { title: string }) => {
+    const existed = tabs.some(tab => tab.title.trim().toLowerCase() === data.title.trim().toLowerCase());
+    if (existed) {
+      showSnack({ msg: 'Tab name already exists!', type: 'error' });
+      return;
+    }
     const key = data.title.toLowerCase().replace(/\s/g, '_');
-
     const newTab: CategoryTab = { key, title: data.title, type: 'custom' };
-
     setTabs([...tabs, newTab]);
-
     form.setValue(`tabs.${tabs.length}` as const, {
       key,
       sections: [],
@@ -166,13 +171,10 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
       title: data.title,
       type: 'custom',
     });
-
     form.resetField(`tabs.${tabs.length}.sections`);
-
     setTimeout(() => {
       setActiveTab(tabs.length);
     }, 0);
-
     setShowAddCategory(false);
   };
 
@@ -247,6 +249,8 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
     form.handleSubmit(async (data: BuilderForm) => {
       setIsSubmitting(true);
 
+      console.log('data', data);
+
       try {
         const fixedTabs: Tab[] = data.tabs.map(tab => ({
           ...tab,
@@ -281,6 +285,7 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
       setActiveTab,
       setAutoSave,
       setTabToDelete,
+      setSectionToDelete,
     },
     selectors: {
       activeTab,
@@ -292,8 +297,9 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
       height,
       isSubmitting,
       showAddCategory,
-      tabToDelete,
       tabs: tabList,
+      tabToDelete,
+      sectionToDelete,
     },
   };
 };

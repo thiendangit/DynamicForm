@@ -19,9 +19,7 @@ export const Tabs = ({
 }: CustomTabsProps) => {
   const [selectedIndex, setSelectedIndex] = React.useState(initialIndex);
 
-  React.useEffect(() => {
-    setSelectedIndex(initialIndex);
-  }, [initialIndex]);
+  const isMounted = useRef<boolean>(false);
 
   const scrollRef = useRef<ScrollView>(null);
 
@@ -33,11 +31,17 @@ export const Tabs = ({
 
   useEffect(() => {
     if (tabs.length > prevTabsLength) {
+      if (!isMounted.current) {
+        isMounted.current = true;
+      } else {
+        setSelectedIndex(tabs.length - 1);
+
+        onTabChange?.(tabs.length - 1);
+
+        scrollRef.current?.scrollToEnd({ animated: true });
+      }
+    } else if (tabs.length < prevTabsLength) {
       setSelectedIndex(tabs.length - 1);
-
-      onTabChange?.(tabs.length - 1);
-
-      scrollRef.current?.scrollToEnd({ animated: true });
     }
 
     setPrevTabsLength(tabs.length);
@@ -73,7 +77,6 @@ export const Tabs = ({
 
   const handleAddTab = () => {
     onAddTab?.();
-    // Không setSelectedIndex ở đây nữa
   };
 
   const handleRemoveTab = (index: number) => {
