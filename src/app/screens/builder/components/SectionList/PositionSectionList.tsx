@@ -1,14 +1,14 @@
 import React from 'react';
-import { Modal, TextInput, TouchableOpacity } from 'react-native';
+import { TextInput, TouchableOpacity } from 'react-native';
 
 import { UseFormReturn } from 'react-hook-form';
-import DatePicker from 'react-native-ui-datepicker';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { positionSectionListStyles } from './PositionSectionList.styles';
+import { useStyles } from 'react-native-unistyles';
 
+import { DatePickerModal } from '@components/date-picker-modal';
 import { BuilderForm, TabError } from '@model/builder.types';
 import { Text, View } from '@rn-core';
-import dayjs from 'dayjs';
+
+import { positionSectionListStyles } from './PositionSectionList.styles';
 
 interface Props {
   form: UseFormReturn<BuilderForm>;
@@ -23,14 +23,11 @@ export default function PositionSectionList({ form, errors }: Props) {
   const startDateValue = form.watch('tabs.0.sections.2.value');
 
   const handleDateChange = (date: unknown) => {
-    setShowDate(false);
-
-    if (date && date instanceof Date && !isNaN(date.getTime())) {
-      form.setValue(
-        'tabs.0.sections.2.value',
-        dayjs(date).format('YYYY-MM-DD'),
-      );
+    if (typeof date === 'string') {
+      form.setValue('tabs.0.sections.2.value', date);
     }
+
+    setShowDate(false);
   };
 
   return (
@@ -78,35 +75,15 @@ export default function PositionSectionList({ form, errors }: Props) {
             editable={false}
             style={[styles.input, { backgroundColor: '#f7f7f7' }]}
             placeholderTextColor="#B0B0B0"
-            pointerEvents='none'
+            pointerEvents="none"
           />
         </TouchableOpacity>
-        <Modal
+        <DatePickerModal
           visible={showDate}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setShowDate(false)}>
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <DatePicker
-                date={
-                  startDateValue ? dayjs(startDateValue).toDate() : new Date()
-                }
-                onChange={({ date }) => handleDateChange(date)}
-                mode="single"
-                locale="en"
-                calendar="gregory"
-                maxDate={new Date()}
-                style={{ borderRadius: 8 }}
-              />
-              <TouchableOpacity
-                onPress={() => setShowDate(false)}
-                style={styles.modalCloseBtn}>
-                <Text style={styles.primaryText}>Đóng</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
+          value={startDateValue || ''}
+          onChange={handleDateChange}
+          onClose={() => setShowDate(false)}
+        />
         {errors?.sections?.[2]?.value && (
           <Text style={styles.errorText}>
             {errors.sections[2].value.message}

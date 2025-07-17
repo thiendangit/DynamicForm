@@ -1,3 +1,41 @@
+## UI Screenshots
+
+Below are some screenshots of the main features in **DynamicFormApp**:
+
+### Builder Tab
+
+<div style="display: flex; gap: 16px">
+  <div>
+    <b>Default Positions Category</b><br/>
+    <img src="documentAssets/builder.png" alt="Positions Tab" width="350" />
+  </div>
+  <div>
+    <b>Custom Category Example</b><br/>
+    <img src="documentAssets/builder_custom_cate.png" alt="Custom Category" width="350" />
+  </div>
+  <div>
+    <b>Remove Category Tab</b><br/>
+    <img src="documentAssets/builder_remove_tab.png" alt="Remove Tab" width="350" />
+  </div>
+  <div>
+    <b>Custom Category with Date Section</b><br/>
+    <img src="documentAssets/builder_custom_cate_section_date.png" alt="Custom Category with Date Section" width="350" />
+  </div>
+</div>
+
+### Profile Tab
+
+<div style="display: flex; gap: 16px">
+  <div>
+    <b>Profile Form</b><br/>
+    <img src="documentAssets/profile.png" alt="Profile" width="350" />
+  </div>
+  <div>
+    <b>Profile Validation Error</b><br/>
+    <img src="documentAssets/profile_error.png" alt="Profile Error" width="350" />
+  </div>
+</div>
+
 # DynamicFormApp
 
 ## Installation & Build Instructions

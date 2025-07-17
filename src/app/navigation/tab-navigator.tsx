@@ -1,31 +1,24 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import ProfileScreen from '@screens/profile';
-import BuilderScreen from '@screens/builder';
-import { APP_SCREEN } from './screen-types';
-import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar';
-import { icons } from '@assets/icon';
 import { Icon } from '@components/icon';
-import { View } from "react-native";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import BuilderScreen from '@screens/builder';
+import ProfileScreen from '@screens/profile';
+import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar';
+
+import { APP_SCREEN } from './screen-types';
 
 const Tab = createBottomTabNavigator();
 
 const tabs: TabsConfigsType = {
   [APP_SCREEN.PROFILE]: {
     icon: ({ focused }) => (
-      <Icon
-        colorTheme={focused ? 'primary' : 'secondary'}
-        icon={'profile'}
-      />
+      <Icon colorTheme={focused ? 'primary' : 'blue'} icon={'profile'} />
     ),
   },
   [APP_SCREEN.BUILDER]: {
     icon: ({ focused }) => (
-      <Icon
-        colorTheme={focused ? 'primary' : 'secondary'}
-        icon={'file_transfer'}
-      />
+      <Icon colorTheme={focused ? 'primary' : 'blue'} icon={'file_transfer'} />
     ),
   },
 };
@@ -43,18 +36,18 @@ export const TabNavigator = () => {
         name={APP_SCREEN.BUILDER}
         component={BuilderScreen}
         options={{
-          title: 'Builder',
+          headerShown: false,
           tabBarLabel: 'Builder',
-          headerShown: false
+          title: 'Builder',
         }}
       />
       <Tab.Screen
         name={APP_SCREEN.PROFILE}
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          headerShown: false,
           tabBarLabel: 'Profile',
-          headerShown: false
+          title: 'Profile',
         }}
       />
     </Tab.Navigator>

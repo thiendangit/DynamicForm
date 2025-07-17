@@ -1,11 +1,10 @@
 import React from 'react';
-import { Modal, Switch, TextInput, TouchableOpacity } from 'react-native';
+import { Switch, TextInput, TouchableOpacity } from 'react-native';
 
-import { UseFormReturn } from 'react-hook-form';
-import DatePicker from 'react-native-ui-datepicker';
+import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
 import { useStyles } from 'react-native-unistyles';
-import { Controller, useFieldArray } from 'react-hook-form';
 
+import { DatePickerModal } from '@components/date-picker-modal';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BuilderForm, Section, TabError } from '@model/builder.types';
 import { Text, View } from '@rn-core';
@@ -28,23 +27,26 @@ interface Props {
 
 export default function CustomSectionList({
   form,
-  // sections, // bỏ không dùng nữa
-  // onAddSection, // bỏ không dùng nữa
-  // onRemoveSection, // bỏ không dùng nữa
   errors,
   tabName,
   onChangeTabName,
   activeTab,
-  setTabToDelete,
   setSectionToDelete,
 }: Props) {
   const { styles } = useStyles(customSectionListStyles);
 
-  // Sử dụng useFieldArray để quản lý sections động
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control: form.control,
     name: `tabs.${activeTab}.sections`,
   });
+
+  const [sectionDateModalIdx, setSectionDateModalIdx] = React.useState<
+    number | null
+  >(null);
+
+  const handleOpenDateModal = (idx: number) => setSectionDateModalIdx(idx);
+
+  const handleCloseDateModal = () => setSectionDateModalIdx(null);
 
   return (
     <View style={styles.wrapper}>
@@ -122,10 +124,10 @@ export default function CustomSectionList({
             <Controller
               control={form.control}
               name={`tabs.${activeTab}.sections.${idx}.title`}
-              render={({ field }) => (
+              render={data => (
                 <TextInput
-                  value={field.value}
-                  onChangeText={field.onChange}
+                  value={data.field.value}
+                  onChangeText={data.field.onChange}
                   placeholder="Section Title"
                   style={styles.input}
                   placeholderTextColor="#B0B0B0"
@@ -146,18 +148,12 @@ export default function CustomSectionList({
                     justifyContent: 'center',
                     marginTop: 12,
                   }}
-                  onPress={() =>
-                    form.setValue(
-                      `tabs.${activeTab}.sections.${idx}._showDate`,
-                      true,
-                      { shouldDirty: true },
-                    )
-                  }
+                  onPress={() => handleOpenDateModal(idx)}
                   activeOpacity={0.8}>
                   <TextInput
                     value={String(
                       form.watch(`tabs.${activeTab}.sections.${idx}.value`) ||
-                      field.value || // Use field.value here
+                      field.value ||
                       '',
                     )}
                     placeholder="YYYY-MM-DD"
@@ -176,70 +172,20 @@ export default function CustomSectionList({
                     style={{ position: 'absolute', right: 12 }}
                   />
                 </TouchableOpacity>
-                <Modal
-                  visible={
-                    !!form.watch(`tabs.${activeTab}.sections.${idx}._showDate`)
+                <DatePickerModal
+                  visible={sectionDateModalIdx === idx}
+                  value={
+                    form.watch(`tabs.${activeTab}.sections.${idx}.value`) || ''
                   }
-                  transparent
-                  animationType="fade"
-                  onRequestClose={() =>
+                  onChange={date =>
                     form.setValue(
-                      `tabs.${activeTab}.sections.${idx}._showDate`,
-                      false,
+                      `tabs.${activeTab}.sections.${idx}.value`,
+                      date,
                       { shouldDirty: true },
                     )
-                  }>
-                  <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                      <DatePicker
-                        date={
-                          form.watch(`tabs.${activeTab}.sections.${idx}.value`)
-                            ? dayjs(
-                              form.watch(
-                                `tabs.${activeTab}.sections.${idx}.value`,
-                              ),
-                            ).toDate()
-                            : new Date()
-                        }
-                        onChange={({ date }) => {
-                          if (
-                            date &&
-                            date instanceof Date &&
-                            !isNaN(date.getTime())
-                          ) {
-                            form.setValue(
-                              `tabs.${activeTab}.sections.${idx}.value`,
-                              dayjs(date).format('YYYY-MM-DD'),
-                              { shouldDirty: true },
-                            );
-                          }
-
-                          form.setValue(
-                            `tabs.${activeTab}.sections.${idx}._showDate`,
-                            false,
-                            { shouldDirty: true },
-                          );
-                        }}
-                        mode="single"
-                        locale="en"
-                        calendar="gregory"
-                        maxDate={new Date()}
-                        style={{ borderRadius: 8 }}
-                      />
-                      <TouchableOpacity
-                        onPress={() =>
-                          form.setValue(
-                            `tabs.${activeTab}.sections.${idx}._showDate`,
-                            false,
-                            { shouldDirty: true },
-                          )
-                        }
-                        style={styles.modalCloseBtn}>
-                        <Text style={styles.primaryText}>Đóng</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
+                  }
+                  onClose={handleCloseDateModal}
+                />
               </>
             ) : (
               <TextInput
@@ -277,7 +223,9 @@ export default function CustomSectionList({
           </View>
         );
       })}
-      <TouchableOpacity onPress={() => append({ title: '', value: '', type: 'text' })} style={styles.addSectionBtn}>
+      <TouchableOpacity
+        onPress={() => append({ title: '', type: 'text', value: '' })}
+        style={styles.addSectionBtn}>
         <MaterialCommunityIcons
           name="plus"
           size={20}

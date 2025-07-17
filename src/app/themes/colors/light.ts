@@ -1,6 +1,8 @@
 export const lightColors = {
   background: '#F2F8FC',
 
+  blue: '#4F46E5',
+
   danger: '#B41313',
   danger100: '#EFA8A8',
   danger20: '#FCF2F2',
