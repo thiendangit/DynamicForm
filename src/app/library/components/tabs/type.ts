@@ -1,5 +1,3 @@
-import { SharedValue } from 'react-native-reanimated';
-
 export type Tab = {
   title: string;
   key: string;

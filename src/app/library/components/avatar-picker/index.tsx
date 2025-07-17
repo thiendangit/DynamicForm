@@ -35,7 +35,11 @@ export default function AvatarPicker({ value, onChange }: AvatarPickerProps) {
       <TouchableOpacity onPress={pickImage}>
         <Image
           source={
-            value ? { uri: value } : require('@assets/appicon/appicon.png')
+            value
+              ? { uri: value }
+              : {
+                  uri: 'https://static.vecteezy.com/system/resources/previews/026/434/409/non_2x/default-avatar-profile-icon-social-media-user-photo-vector.jpg',
+                }
           }
           style={styles.image}
         />

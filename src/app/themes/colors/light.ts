@@ -61,4 +61,15 @@ export const lightColors = {
   warning400: '#EBBA28',
   warning50: '#FFF4D2',
   warning500: '#E5AF0C',
+  textPrimary: '#141417',
+  textSecondary: '#83818E',
+  onPrimary: '#fff',
+  inputBackground: '#FAFAFA',
+  inputBorder: '#E5E7EB',
+  errorBackground: '#FFF0F3',
+  surface: '#fff',
+  overlay: 'rgba(0,0,0,0.18)',
+  shadow: '#000',
+  primaryLight: '#EEF2FF',
+  error: '#B41313', // alias cho danger
 } as const;

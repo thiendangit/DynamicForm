@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TextInput } from 'react-native';
 
 import { Controller, useForm } from 'react-hook-form';
@@ -14,35 +14,55 @@ import { profileFormStyles } from './ProfileForm.styles';
 
 import { ProfileFormValues, profileSchema } from '../../ProfileForm.schema';
 
-export default function ProfileForm() {
+interface ProfileFormProps {
+  value: ProfileFormValues;
+  onChange: (data: ProfileFormValues) => void;
+  onSubmit: (data: ProfileFormValues) => void;
+}
+
+export default function ProfileForm({
+  value,
+  onChange,
+  onSubmit,
+}: ProfileFormProps) {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
+    watch,
+    reset,
   } = useForm<ProfileFormValues>({
-    defaultValues: {
-      avatar: '',
-      email: '',
-      firstName: '',
-      lastName: '',
-    },
+    defaultValues: value,
     resolver: zodResolver(profileSchema),
   });
 
   const { styles } = useStyles(profileFormStyles);
 
-  const onSubmit = (data: ProfileFormValues) => {
-    // TODO: save to storage
-    // alert(JSON.stringify(data, null, 2));
-  };
+  useEffect(() => {
+    reset(value);
+  }, [value, reset]);
+
+  useEffect(() => {
+    if (JSON.stringify(value) !== JSON.stringify(watch())) {
+      onChange(watch());
+    }
+  }, [onChange, value, watch]);
 
   return (
     <View>
       <Controller
         control={control}
         name="avatar"
-        render={({ field: { value, onChange } }) => (
-          <AvatarPicker value={value} onChange={onChange} />
+        render={({ field: { value, onChange: onAvatarChange } }) => (
+          <AvatarPicker
+            value={value}
+            onChange={uri => {
+              onAvatarChange(uri);
+
+              setValue('avatar', uri, { shouldDirty: true });
+            }}
+          />
         )}
       />
       <View style={styles.colItem}>

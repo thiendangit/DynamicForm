@@ -61,4 +61,16 @@ export const darkColors = {
   warning400: '#C4A23B',
   warning50: '#352F1E',
   warning500: '#F0C544',
+
+  textPrimary: '#EAE9F2',
+  textSecondary: '#7A7887',
+  onPrimary: '#141417',
+  inputBackground: '#201F26',
+  inputBorder: '#42404D',
+  errorBackground: '#4F2729',
+  surface: '#2B2A31',
+  overlay: 'rgba(0,0,0,0.5)',
+  shadow: '#000',
+  primaryLight: '#52313E',
+  error: '#E96F6F', // alias cho danger
 } as const;

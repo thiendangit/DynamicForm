@@ -3,6 +3,8 @@ import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useStyles } from 'react-native-unistyles';
+import { addCategoryModalStyles } from './AddCategoryModal.styles';
 
 const addCategorySchema = z.object({
   title: z.string().min(1, 'Tab name is required'),
@@ -28,35 +30,25 @@ export function AddCategoryModal({
     resolver: zodResolver(addCategorySchema),
   });
 
+  const { styles } = useStyles(addCategoryModalStyles);
+
   const handleAdd = (data: AddCategoryForm) => {
     onSubmit({ ...data });
   };
 
   return (
-    <View
-      style={{
-        alignSelf: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        minWidth: 300,
-        padding: 24,
-      }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 16 }}>
-        Add New Category
-      </Text>
-      <Text style={{ marginBottom: 8 }}>Tab Name</Text>
+    <View style={styles.wrapper}>
+      <Text style={styles.title}>Add New Category</Text>
+      <Text style={styles.label}>Tab Name</Text>
       <Controller
         control={control}
         name="title"
         render={({ field: { onChange, value } }) => (
           <TextInput
-            style={{
-              borderColor: errors.title ? 'red' : '#ccc',
-              borderRadius: 8,
-              borderWidth: 1,
-              marginBottom: 4,
-              padding: 10,
-            }}
+            style={[
+              styles.input,
+              errors.title ? styles.inputError : undefined,
+            ]}
             placeholder="Enter tab name"
             value={value}
             onChangeText={onChange}
@@ -64,32 +56,18 @@ export function AddCategoryModal({
         )}
       />
       {errors.title && (
-        <Text style={{ color: 'red', marginBottom: 8 }}>{errors.title.message}</Text>
+        <Text style={styles.errorText}>{errors.title.message}</Text>
       )}
-      <View style={{ flexDirection: 'row', marginTop: 16 }}>
+      <View style={styles.btnRow}>
         <TouchableOpacity
-          style={{
-            backgroundColor: '#BC305D',
-            borderRadius: 8,
-            flex: 1,
-            marginRight: 8,
-            padding: 12,
-          }}
+          style={styles.addBtn}
           onPress={handleSubmit(handleAdd)}>
-          <Text
-            style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>
-            Add
-          </Text>
+          <Text style={styles.addBtnText}>Add</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{
-            backgroundColor: '#eee',
-            borderRadius: 8,
-            flex: 1,
-            padding: 12,
-          }}
+          style={styles.cancelBtn}
           onPress={onCancel}>
-          <Text style={{ color: '#333', textAlign: 'center' }}>Cancel</Text>
+          <Text style={styles.cancelBtnText}>Cancel</Text>
         </TouchableOpacity>
       </View>
     </View>

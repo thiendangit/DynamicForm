@@ -1,19 +1,24 @@
 import React from 'react';
 import { Modal, Switch, TextInput, TouchableOpacity } from 'react-native';
 
+import { UseFormReturn } from 'react-hook-form';
 import DatePicker from 'react-native-ui-datepicker';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { useStyles } from 'react-native-unistyles';
+import { Controller, useFieldArray } from 'react-hook-form';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { BuilderForm, Section, TabError } from '@model/builder.types';
 import { Text, View } from '@rn-core';
 import dayjs from 'dayjs';
 
+import { customSectionListStyles } from './CustomSectionList.styles';
+
 interface Props {
-  form: any;
-  sections: any[];
+  form: UseFormReturn<BuilderForm>;
+  sections: Section[];
   onAddSection: () => void;
   onRemoveSection: (idx: number) => void;
-  errors: any;
+  errors: TabError;
   tabName: string;
   onChangeTabName: (val: string) => void;
   activeTab: number;
@@ -21,15 +26,21 @@ interface Props {
 
 export default function CustomSectionList({
   form,
-  sections,
-  onAddSection,
-  onRemoveSection,
+  // sections, // bỏ không dùng nữa
+  // onAddSection, // bỏ không dùng nữa
+  // onRemoveSection, // bỏ không dùng nữa
   errors,
   tabName,
   onChangeTabName,
   activeTab,
 }: Props) {
-  const { styles } = useStyles(styleSheet);
+  const { styles } = useStyles(customSectionListStyles);
+
+  // Sử dụng useFieldArray để quản lý sections động
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: `tabs.${activeTab}.sections`,
+  });
 
   return (
     <View style={styles.wrapper}>
@@ -47,34 +58,37 @@ export default function CustomSectionList({
         )}
       </View>
       <Text style={styles.sectionTitle}>Sections</Text>
-      {sections.map((section, idx) => {
-        const type = section.type || 'text';
+      {fields.map((field, idx) => {
+        const type = field.type || 'text';
 
         const isDate = type === 'date';
 
-        // Xử lý switch đổi type
         const handleToggleType = (val: boolean) => {
-          const sections = form.getValues(`tabs.${activeTab}.sections`) || [];
+          const _sections = form.getValues(`tabs.${activeTab}.sections`) || [];
 
-          const newSections = sections.map((s: any, i: number) =>
+          const newSections = _sections.map((s, i: number) =>
             i === idx
               ? {
-                  ...s,
-                  type: val ? 'date' : 'text',
-                  value: val ? dayjs().format('YYYY-MM-DD') : '',
-                }
+                ...s,
+                type: val ? 'date' : 'text',
+                value: val ? dayjs().format('YYYY-MM-DD') : '',
+              }
               : s,
           );
 
-          form.setValue(`tabs.${activeTab}.sections`, newSections, {
-            shouldDirty: true,
-            shouldTouch: true,
-            shouldValidate: true,
-          });
+          form.setValue(
+            `tabs.${activeTab}.sections`,
+            newSections as typeof _sections,
+            {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            },
+          );
         };
 
         return (
-          <View key={section.id || idx} style={styles.card}>
+          <View key={field.id} style={styles.card}>
             <View style={styles.cardHeaderRow}>
               <Text style={styles.cardHeader}>Section {idx + 1}</Text>
               <View style={styles.switchRow}>
@@ -100,19 +114,19 @@ export default function CustomSectionList({
                 </Text>
               </View>
             </View>
-            <TextInput
-              value={
-                form.watch(`tabs.${activeTab}.sections.${idx}.title`) ||
-                section.title
-              }
-              onChangeText={(val: string) =>
-                form.setValue(`tabs.${activeTab}.sections.${idx}.title`, val, {
-                  shouldDirty: true,
-                })
-              }
-              placeholder="Section Title"
-              style={styles.input}
-              placeholderTextColor="#B0B0B0"
+            {/* Sử dụng Controller cho Section Title */}
+            <Controller
+              control={form.control}
+              name={`tabs.${activeTab}.sections.${idx}.title`}
+              render={({ field }) => (
+                <TextInput
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  placeholder="Section Title"
+                  style={styles.input}
+                  placeholderTextColor="#B0B0B0"
+                />
+              )}
             />
             {errors?.sections?.[idx]?.title && (
               <Text style={styles.errorText}>
@@ -137,8 +151,10 @@ export default function CustomSectionList({
                   }
                   activeOpacity={0.8}>
                   <TextInput
-                    value={form.watch(
-                      `tabs.${activeTab}.sections.${idx}.value`,
+                    value={String(
+                      form.watch(`tabs.${activeTab}.sections.${idx}.value`) ||
+                      field.value || // Use field.value here
+                      '',
                     )}
                     placeholder="YYYY-MM-DD"
                     editable={false}
@@ -175,10 +191,10 @@ export default function CustomSectionList({
                         date={
                           form.watch(`tabs.${activeTab}.sections.${idx}.value`)
                             ? dayjs(
-                                form.watch(
-                                  `tabs.${activeTab}.sections.${idx}.value`,
-                                ),
-                              ).toDate()
+                              form.watch(
+                                `tabs.${activeTab}.sections.${idx}.value`,
+                              ),
+                            ).toDate()
                             : new Date()
                         }
                         onChange={({ date }) => {
@@ -223,10 +239,9 @@ export default function CustomSectionList({
               </>
             ) : (
               <TextInput
-                value={
-                  form.watch(`tabs.${activeTab}.sections.${idx}.value`) ||
-                  section.value
-                }
+                value={String(
+                  form.watch(`tabs.${activeTab}.sections.${idx}.value`) || '',
+                )}
                 onChangeText={(val: string) =>
                   form.setValue(
                     `tabs.${activeTab}.sections.${idx}.value`,
@@ -245,7 +260,7 @@ export default function CustomSectionList({
               </Text>
             )}
             <TouchableOpacity
-              onPress={() => onRemoveSection(idx)}
+              onPress={() => remove(idx)}
               style={styles.removeBtn}>
               <MaterialCommunityIcons
                 name="trash-can-outline"
@@ -258,7 +273,7 @@ export default function CustomSectionList({
           </View>
         );
       })}
-      <TouchableOpacity onPress={onAddSection} style={styles.addSectionBtn}>
+      <TouchableOpacity onPress={() => append({ title: '', value: '', type: 'text' })} style={styles.addSectionBtn}>
         <MaterialCommunityIcons
           name="plus"
           size={20}
@@ -270,157 +285,3 @@ export default function CustomSectionList({
     </View>
   );
 }
-
-const styleSheet = createStyleSheet(() => ({
-  addSectionBtn: {
-    alignItems: 'center',
-    backgroundColor: '#4F46E5',
-    borderRadius: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 24,
-    marginTop: 8,
-    paddingVertical: 12,
-  },
-  addSectionBtnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    elevation: 2,
-    marginBottom: 18,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { height: 2, width: 0 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-  },
-
-  cardHeader: {
-    color: '#222',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  cardHeaderRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  errorText: {
-    color: '#BC305D',
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  input: {
-    backgroundColor: '#FAFAFA',
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    borderWidth: 1,
-    fontSize: 15,
-    padding: 12,
-  },
-  modalCancelBtn: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 16,
-    paddingHorizontal: 32,
-    paddingVertical: 12,
-  },
-  modalCancelBtnText: {
-    color: '#374151',
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-  modalCloseBtn: {
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  modalContent: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    elevation: 4,
-    minWidth: 260,
-    padding: 28,
-    shadowColor: '#000',
-    shadowOffset: { height: 2, width: 0 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-  },
-  modalOverlay: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.18)',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  modalPrimaryBtn: {
-    backgroundColor: '#4F46E5',
-    borderRadius: 16,
-    marginBottom: 10,
-    paddingHorizontal: 32,
-    paddingVertical: 12,
-  },
-  modalPrimaryBtnText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-  modalTitle: {
-    color: '#222',
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginBottom: 18,
-    textAlign: 'center',
-  },
-  primaryText: {
-    color: '#4F46E5',
-    fontSize: 13,
-    fontWeight: 'bold',
-  },
-  removeBtn: {
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    backgroundColor: '#FFF0F3',
-    borderRadius: 12,
-    flexDirection: 'row',
-    marginTop: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  removeBtnText: {
-    color: '#BC305D',
-    fontSize: 13,
-    fontWeight: 'bold',
-  },
-  sectionTitle: {
-    color: '#222',
-    fontSize: 18,
-    fontWeight: 'bold',
-
-    marginBottom: 12,
-  },
-  switchLabel: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginHorizontal: 4,
-  },
-  switchRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 4,
-  },
-  typeBtn: {
-    alignItems: 'center',
-    backgroundColor: '#EEF2FF',
-    borderRadius: 12,
-    flexDirection: 'row',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  wrapper: {
-    padding: 16,
-  },
-}));

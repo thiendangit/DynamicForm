@@ -6,9 +6,15 @@ import { Screen } from '@components/screen';
 
 import ProfileForm from './components/ProfileForm';
 import { styleSheet } from './Profile.styles';
+import { useProfileViewModel } from './Profile.viewModel';
 
 export default function ProfileScreen() {
   const { styles } = useStyles(styleSheet);
+
+  const {
+    selectors: { profile },
+    handlers: { handleChange, handleSubmit },
+  } = useProfileViewModel();
 
   return (
     <Screen
@@ -17,7 +23,11 @@ export default function ProfileScreen() {
       style={styles.container}
       title={'Profile Screen'}
       scroll>
-      <ProfileForm />
+      <ProfileForm
+        value={profile}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+      />
     </Screen>
   );
 }

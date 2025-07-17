@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { TabItem } from './tab-item';
@@ -30,11 +30,14 @@ export const Tabs = ({
   useEffect(() => {
     if (tabs.length > prevTabsLength) {
       setSelectedIndex(tabs.length - 1);
+
       onTabChange?.(tabs.length - 1);
+
       scrollRef.current?.scrollToEnd({ animated: true });
     }
+
     setPrevTabsLength(tabs.length);
-  }, [tabs.length]);
+  }, [onTabChange, prevTabsLength, tabs.length]);
 
   const handleTabLayout = (index: number, event: any) => {
     const { x, width } = event.nativeEvent.layout;
