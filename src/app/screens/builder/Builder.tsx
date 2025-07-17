@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Switch, TouchableOpacity } from 'react-native';
 
+import { ScrollView } from 'react-native-gesture-handler';
 import { useStyles } from 'react-native-unistyles';
 
 import { Modal } from '@components/modal';
@@ -11,10 +12,12 @@ import { Text, View } from '@rn-core';
 import { builderStyles } from './Builder.styles';
 import { useBuilderViewModel } from './Builder.viewModel';
 import { AddCategoryModal } from './components/AddCategoryModal';
+import { ConfirmDeleteTabModal } from './components/ConfirmDeleteTabModal';
 import SectionList from './components/SectionList';
-import { ScrollView } from 'react-native-gesture-handler';
 
 export default function BuilderScreen() {
+  const [sectionToDelete, setSectionToDelete] = useState<number | null>(null);
+
   const {
     selectors: {
       tabs,
@@ -26,6 +29,7 @@ export default function BuilderScreen() {
       errors,
       height,
       autoSave,
+      tabToDelete,
     },
     handlers: {
       handleTabChange,
@@ -38,13 +42,32 @@ export default function BuilderScreen() {
       handleChangeTabName,
       handleSubmit,
       setAutoSave,
+      setTabToDelete,
     },
     form,
   } = useBuilderViewModel();
 
   const tabType = tabs[activeTab]?.type || 'positions';
 
-  const { styles } = useStyles(builderStyles);
+  const { styles, theme } = useStyles(builderStyles);
+
+  // Hàm xác nhận xóa tab
+  const confirmRemoveTab = () => {
+    if (tabToDelete !== null) {
+      handleRemoveTab(tabToDelete);
+
+      setTabToDelete(null);
+    }
+  };
+
+  // Xác nhận xóa section
+  const confirmRemoveSection = () => {
+    if (sectionToDelete !== null) {
+      handleRemoveSection(sectionToDelete);
+
+      setSectionToDelete(null);
+    }
+  };
 
   return (
     <Screen statusColor="transparent" statusBarStyle="dark" scroll={false}>
@@ -62,7 +85,7 @@ export default function BuilderScreen() {
           initialIndex={activeTab}
           onTabChange={handleTabChange}
           onAddTab={handleAddTab}
-          onRemoveTab={handleRemoveTab}
+          onRemoveTab={setTabToDelete}
         />
         <SectionList
           key={activeTab}
@@ -75,6 +98,8 @@ export default function BuilderScreen() {
           tabName={formTabName}
           onChangeTabName={handleChangeTabName}
           activeTab={activeTab}
+          setTabToDelete={setTabToDelete}
+          setSectionToDelete={setSectionToDelete}
         />
         <View style={styles.saveBtnWrapper}>
           <TouchableOpacity
@@ -92,6 +117,18 @@ export default function BuilderScreen() {
           onCancel={handleCancelAddTab}
         />
       </Modal>
+      <ConfirmDeleteTabModal
+        visible={tabToDelete !== null}
+        onConfirm={confirmRemoveTab}
+        onCancel={() => setTabToDelete(null)}
+        theme={theme}
+      />
+      <ConfirmDeleteTabModal
+        visible={sectionToDelete !== null}
+        onConfirm={confirmRemoveSection}
+        onCancel={() => setSectionToDelete(null)}
+        theme={theme}
+      />
     </Screen>
   );
 }

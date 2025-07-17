@@ -34,6 +34,7 @@ type UseBuilderViewModelReturn = {
     errors: BuilderFormErrors;
     height: number;
     autoSave: boolean;
+    tabToDelete: number | null;
   };
   handlers: {
     handleTabChange: (index: number) => void;
@@ -47,6 +48,7 @@ type UseBuilderViewModelReturn = {
     handleSubmit: () => void;
     setActiveTab: (idx: number) => void;
     setAutoSave: (value: boolean) => void;
+    setTabToDelete: (index: number | null) => void;
   };
   form: UseFormReturn<BuilderForm>;
 };
@@ -55,6 +57,8 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
   const [tabs, setTabs] = useState<CategoryTab[]>([
     { key: 'positions', title: 'Positions', type: 'positions' },
   ]);
+
+  const [tabToDelete, setTabToDelete] = useState<number | null>(null);
 
   const height = useBottomTabBarHeight();
 
@@ -98,8 +102,7 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
       name: `tabs.${activeTab}.sections` as const,
     }) || [];
 
-  // Tab name cho Tabs (dùng để render Tabs)
-  const tabList = tabs.map((t, i) => ({
+  const tabList = tabs.map(t => ({
     key: t.key,
     title: t.title,
     type: t.type,
@@ -179,17 +182,19 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
     }
 
     const newTabs = tabs.filter((_, i) => i !== index);
-
     setTabs(newTabs);
 
     form.unregister(`tabs.${index}` as const);
+    const newFormTabs = form.getValues('tabs').filter((_, i) => i !== index) as Tab[];
+    form.setValue('tabs', newFormTabs);
 
-    form.setValue(
-      'tabs',
-      form.getValues('tabs').filter((_, i) => i !== index) as Tab[],
-    );
+    setActiveTab(prev => {
+      if (prev > index) return prev - 1;
+      if (prev === index) return Math.max(0, prev - 1);
+      return prev;
+    });
 
-    setActiveTab(Math.max(0, activeTab - 1));
+    save(STORAGE_KEY, { ...form.getValues(), tabs: newFormTabs });
   };
 
   const autoSaveTab = async (tabIndex: number) => {
@@ -275,6 +280,7 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
       handleTabChange,
       setActiveTab,
       setAutoSave,
+      setTabToDelete,
     },
     selectors: {
       activeTab,
@@ -286,6 +292,7 @@ export const useBuilderViewModel = (): UseBuilderViewModelReturn => {
       height,
       isSubmitting,
       showAddCategory,
+      tabToDelete,
       tabs: tabList,
     },
   };

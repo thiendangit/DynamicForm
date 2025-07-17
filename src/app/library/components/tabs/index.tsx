@@ -19,6 +19,10 @@ export const Tabs = ({
 }: CustomTabsProps) => {
   const [selectedIndex, setSelectedIndex] = React.useState(initialIndex);
 
+  React.useEffect(() => {
+    setSelectedIndex(initialIndex);
+  }, [initialIndex]);
+
   const scrollRef = useRef<ScrollView>(null);
 
   const [tabLayouts, setTabLayouts] = useState<{ x: number; width: number }[]>(
@@ -74,10 +78,6 @@ export const Tabs = ({
 
   const handleRemoveTab = (index: number) => {
     onRemoveTab?.(index);
-
-    if (selectedIndex === index) {
-      setSelectedIndex(0);
-    }
   };
 
   return (

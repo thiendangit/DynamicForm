@@ -22,6 +22,8 @@ interface Props {
   tabName: string;
   onChangeTabName: (val: string) => void;
   activeTab: number;
+  setTabToDelete: (idx: number) => void;
+  setSectionToDelete: (idx: number) => void;
 }
 
 export default function CustomSectionList({
@@ -33,6 +35,8 @@ export default function CustomSectionList({
   tabName,
   onChangeTabName,
   activeTab,
+  setTabToDelete,
+  setSectionToDelete,
 }: Props) {
   const { styles } = useStyles(customSectionListStyles);
 
@@ -260,7 +264,7 @@ export default function CustomSectionList({
               </Text>
             )}
             <TouchableOpacity
-              onPress={() => remove(idx)}
+              onPress={() => setSectionToDelete(idx)}
               style={styles.removeBtn}>
               <MaterialCommunityIcons
                 name="trash-can-outline"

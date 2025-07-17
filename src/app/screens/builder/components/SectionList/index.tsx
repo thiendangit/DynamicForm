@@ -17,6 +17,8 @@ export interface SectionListProps {
   tabName: string;
   onChangeTabName: (val: string) => void;
   activeTab: number;
+  setTabToDelete: (idx: number) => void;
+  setSectionToDelete: (idx: number) => void;
 }
 
 export default function SectionList(props: SectionListProps) {
