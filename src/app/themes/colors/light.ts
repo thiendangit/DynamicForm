@@ -11,31 +11,41 @@ export const lightColors = {
 
   danger500: '#C92B2B',
 
+  error: '#B41313',
+  errorBackground: '#FFF0F3',
   info: '#248DDE',
   info100: '#BCE0FB',
   info200: '#9BCFF6',
   info300: '#7ABEF2',
   info400: '#59ADEE',
+
   info50: '#DEF1FF',
+
   info500: '#3D9EE9',
 
+  inputBackground: '#FAFAFA',
+  inputBorder: '#E5E7EB',
   neutral: '#141417',
-
   neutral100: '#E6E5EA',
   neutral200: '#C7C5CD',
   neutral300: '#83818E',
+
   neutral400: '#4F4E59',
   neutral50: '#F4F3F5',
   neutral500: '#2B2A31',
+  onPrimary: '#fff',
+  overlay: 'rgba(0,0,0,0.18)',
   primary: '#BC305D',
-
   primary100: '#F5C0D2',
+
   primary200: '#F2A3BD',
   primary300: '#E27A9C',
   primary400: '#D46287',
   primary50: '#FDE1EB',
+
   primary500: '#C84771',
   primaryGradient: ['#C84771', '#ECBC55'],
+  primaryLight: '#EEF2FF',
 
   secondary: '#D8A12D',
   secondary100: '#F6E7C6',
@@ -44,6 +54,7 @@ export const lightColors = {
   secondary400: '#E5C173',
   secondary50: '#F5EFE1',
   secondary500: '#ECBC55',
+  shadow: '#000',
 
   success: '#26B765',
   success100: '#B4EFCD',
@@ -52,24 +63,17 @@ export const lightColors = {
   success400: '#5ED792',
   success50: '#D9F6E5',
   success500: '#41C97C',
+  surface: '#fff',
   technical: '#535474',
+  textPrimary: '#141417',
+  textSecondary: '#83818E',
 
   warning: '#CF9C00',
   warning100: '#FCE399',
+
   warning200: '#F6D369',
   warning300: '#F2C746',
   warning400: '#EBBA28',
   warning50: '#FFF4D2',
   warning500: '#E5AF0C',
-  textPrimary: '#141417',
-  textSecondary: '#83818E',
-  onPrimary: '#fff',
-  inputBackground: '#FAFAFA',
-  inputBorder: '#E5E7EB',
-  errorBackground: '#FFF0F3',
-  surface: '#fff',
-  overlay: 'rgba(0,0,0,0.18)',
-  shadow: '#000',
-  primaryLight: '#EEF2FF',
-  error: '#B41313', // alias cho danger
 } as const;

@@ -18,10 +18,6 @@ $ cd DynamicFormApp
 # Install dependencies
 $ yarn
 
-# Install pods for iOS
-$ cd ios && bundle install && bundle exec pod install && cd ..
-```
-
 ### 3. Running the App
 - **Android:**
   ```bash
