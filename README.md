@@ -40,6 +40,14 @@ Below are some screenshots of the main features in **DynamicFormApp**:
   </div>
 </div>
 
+## Demo Video
+
+<div align="center">
+  <video src="documentAssets/demo.mp4" width="400" controls>
+    Your browser does not support the video tag.
+  </video>
+</div>
+
 # DynamicFormApp
 
 ## Installation & Build Instructions
