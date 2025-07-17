@@ -42,11 +42,7 @@ Below are some screenshots of the main features in **DynamicFormApp**:
 
 ## Demo Video
 
-<div align="center">
-  <video src="[documentAssets/demo.mp4](https://github.com/thiendangit/DynamicForm/blob/master/documentAssets/demo.mp4)" width="400" controls>
-    Your browser does not support the video tag.
-  </video>
-</div>
+[Video](https://drive.google.com/file/d/1RJelrSTJ8NruijwBS0u2E8l6yiXJiWWh/view)
 
 # DynamicFormApp
 
